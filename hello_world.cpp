@@ -1,4 +1,4 @@
-// Part of ImGui Bundle - MIT License - Copyright (c) 2022-2024 Pascal Thomet - https://github.com/pthom/imgui_bundle
+﻿// Part of ImGui Bundle - MIT License - Copyright (c) 2022-2024 Pascal Thomet - https://github.com/pthom/imgui_bundle
 #include "immapp/immapp.h"
 #ifdef IMGUI_BUNDLE_WITH_IMPLOT
 #include "implot/implot.h"
@@ -7,55 +7,55 @@
 
 #include <cmath>
 
-
-void DemoImplot()
-{
-    static std::vector<double> x, y1, y2;
-    if (x.empty())
-    {
-        double pi = 3.1415;
-        for (int i = 0; i < 1000; ++i)
-        {
-            double x_ = pi * 4. * (double)i / 1000.;
-            x.push_back(x_);
-            y1.push_back(cos(x_));
-            y2.push_back(sin(x_));
-        }
-    }
-
-    ImGuiMd::Render("# This is the plot of _cosinus_ and *sinus*");
-#ifdef IMGUI_BUNDLE_WITH_IMPLOT
-    if (ImPlot::BeginPlot("Plot"))
-    {
-        ImPlot::PlotLine("y1", x.data(), y1.data(), (int)x.size());
-        ImPlot::PlotLine("y2", x.data(), y2.data(), (int)x.size());
-        ImPlot::EndPlot();
-    }
-#endif
-}
-
-
 void Gui()
 {
     ImGuiMd::RenderUnindented(R"(
-            # Dear ImGui Bundle
-            [Dear ImGui Bundle](https://github.com/pthom/imgui_bundle) is a bundle for [Dear ImGui](https://github.com/ocornut/imgui.git), including various useful libraries from its ecosystem.
-            It enables to easily create ImGui applications in C++, as well as in Python.
-
-            This is an example of markdown widget, with an included image:
-
-            ![world](images/world.png)
-
-            ---
-            And below is a graph created with ImPlot:
+            # Dear ImGui Bundle, Anthony
         )");
 
-    DemoImplot();
-
     ImGui::Separator();
-    ImGuiMd::RenderUnindented("*Note: the icon of this application is defined by `assets/app_settings/icon.png`*");
-}
+    ImGuiMd::RenderUnindented("Drag to reorder items \n");
+    ImGui::Separator();
 
+    static const char* names[10] =
+    {
+        "Chong", "Faat", "Baat", "East", "South", "West", "North", "1 Maan", "1 Tong", "1 Suuk"
+    };
+
+    for (int n = 0; n < IM_ARRAYSIZE(names); n++)
+    {
+        ImGui::PushID(n);
+        ImGui::SameLine();
+        ImGui::Button(names[n], ImVec2(30, 50));
+
+        // Our buttons are both drag sources and drag targets here!
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+        {
+            // Set payload to carry the index of our item (could be anything)
+            ImGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
+
+            // Display preview (could be anything, e.g. when dragging an image we could decide to display
+            // the filename and a small preview of the image, etc.)
+            ImGui::Text("Swap %s", names[n]); 
+            ImGui::EndDragDropSource();
+        }
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(int));
+                int payload_n = *(const int*)payload->Data;
+
+                // Swap 
+                const char* tmp = names[n];
+                names[n] = names[payload_n];
+                names[payload_n] = tmp;
+            }
+            ImGui::EndDragDropTarget();
+        }
+        ImGui::PopID();
+    }
+}
 
 int main(int , char *[])
 {
