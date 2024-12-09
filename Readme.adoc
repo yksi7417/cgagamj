@@ -63,7 +63,7 @@ assets/
 │    │    ├── Roboto-BoldItalic.ttf
 │    │    ├── Roboto-Regular.ttf
 │    │    └── Roboto-RegularItalic.ttf
-│    ├── SourceCodePro-Regular.ttf
+│    ├── Inconsolata-Medium.ttf
 ├── images
 │    └── markdown_broken_image.png
 
@@ -145,7 +145,7 @@ source ~/emsdk/emsdk_env.sh
 # cmake and build
 mkdir build_emscripten
 cd build_emscripten
-emcmake cmake ..
+emcmake cmake .. -DCMAKE_BUILD_TYPE=Release # (Release builds lead to smaller files)
 make -j 4
 
 # launch a webserver
@@ -216,7 +216,8 @@ cmake .. \
 -DPLATFORM=OS64COMBINED \
 -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=XXXXXXXXX \
 -DHELLO_IMGUI_BUNDLE_IDENTIFIER_URL_PART=com.your_website \
--DHELLOIMGUI_USE_SDL2=ON
+-DHELLOIMGUI_USE_SDL2=ON \
+-DHELLOIMGUI_FREETYPE_STATIC=ON \
 -DHELLOIMGUI_HAS_OPENGL3=ON
 ----
 
